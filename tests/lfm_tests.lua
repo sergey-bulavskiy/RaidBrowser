@@ -81,6 +81,27 @@ local test_cases = {
 	},
 
 	{
+		message = 'LFM VOA 25 NEED 3 RPDS 2 MDPS',
+		should_fail = false,
+		raid = 'voa25',
+		roles = { 'dps' },
+		gs = ' '
+	},
+
+	{
+		message = 'LFM VOA 25 NEED MELEE AND RANGED',
+		should_fail = false,
+		raid = 'voa25',
+		roles = { 'dps' },
+		gs = ' '
+	},
+
+	{
+		message = 'LFM ICC 10 guild looking for new members',
+		should_fail = true,
+	},
+
+	{
 		message = 'LF JWC 450 !!! ',
 		should_fail = true,
 	},

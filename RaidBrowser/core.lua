@@ -730,6 +730,8 @@ local role_patterns = {
 
 		'hunte?r?s?',
 
+		'melee',
+		'ranged',
 		'm[dp][dp]s' .. meta_or_sep,
 		'r[dp][dp]s',
 		'dps',
@@ -792,6 +794,8 @@ local guild_recruitment_patterns = {
 	'active' .. csep .. 'raiders?',
 	'is' .. csep .. 'a' .. csep .. '[%a]*' .. csep .. '[pvep][pvep][pvep]' .. csep .. 'guild',
 	'lf' .. sep .. 'members',
+	'new' .. sep .. 'members',
+	'reclutan?d?o?',
 };
 
 local trade_message_patterns = {
@@ -853,7 +857,7 @@ local lfm_patterns = {
 	lfm .. non_meta .. meta_raid,
 
 	meta_raid .. non_meta .. meta_role,
-	'new' .. csep .. 'run' .. meta_raid,
+	'new' .. csep .. 'run' .. csep .. meta_raid,
 }
 
 local guild_recruitment_metapatterns = {
@@ -1162,6 +1166,7 @@ end
 RaidBrowserLfmChannelListeners = {
 	['CHAT_MSG_CHANNEL'] = {},
 	['CHAT_MSG_YELL'] = {},
+	['CHAT_MSG_SAY'] = {},
 };
 
 local channel_listeners = {};
@@ -1170,7 +1175,7 @@ local channel_listeners = {};
 ---@return boolean
 ---@nodiscard
 local function is_lfm_channel(channel)
-	return channel == 'CHAT_MSG_CHANNEL' or channel == 'CHAT_MSG_YELL';
+	return channel == 'CHAT_MSG_CHANNEL' or channel == 'CHAT_MSG_YELL' or channel == 'CHAT_MSG_SAY';
 end
 
 ---@diagnostic disable-next-line: unused-local
