@@ -3,7 +3,7 @@
 # RaidBrowser
 Bringing LFR to Wotlk (Non-Classic).
 
-This addon replaces the unused (in 3.3.5a) LFR tab in the social menu with a working raid finder. RaidBrowser works similarly to Live WoW's group finder, except raid leaders do not need to interact with the addon to list their group. RaidBrowser searches for LFR messages sent in chat and /y channels and lists any found raids in the "Browse" tab of the raid browser. 
+This addon replaces the unused (in 3.3.5a) LFR tab in the social menu with a working raid finder. RaidBrowser works similarly to Live WoW's group finder, except raid leaders do not need to interact with the addon to list their group. RaidBrowser searches for LFR messages sent in the channels you have joined (General, Trade, LookingForGroup, Global, ...), in /yell and in /say and lists any found raids in the "Browse" tab of the raid browser. 
 
 When searching for a raid to join in Global, there can be large amounts of text (and meaningless spam) to read in order to find anything. This addon does all the text processing work and lists all the raids in a coherent format. Each entry in the raid browser is formatted as follows to include raid leader name, raid name, gearscore requirements, and the list of needed roles (tank/healer/dps).
 
@@ -16,6 +16,7 @@ No longer will you join a raid and embarrass yourself upon realizing that you've
 This is a fork of [Ostoic/RaidBrowser](https://github.com/Ostoic/RaidBrowser) (MIT licensed), maintained for the 3.3.5a client. It keeps everything the original does and adds the following.
 
 **Better message detection**
+- Adverts are also picked up from `/say`, in addition to the channels you have joined and `/yell`.
 - More ways to name roles and raids are understood: `Ppal`, `Pral`, `PWAR`, `BDK` (tank), `Rdru`, `Rsham`, `Disc`/`Disco` (healer), `Ele`, `Enh`/`Enha`/`Encha`, `dudu balance` (dps) and others.
 - `VoA18` is read as VoA 25, since that is how it is usually advertised.
 - A bare "shaman" is no longer counted as a healer, so "Shaman dps" is listed as dps.
