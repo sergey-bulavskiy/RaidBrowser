@@ -356,7 +356,10 @@ local raid_list = {
 		patterns = std.algorithm.copy_back(
 			create_pattern_from_template('voa', 25, 'simple'),
 			{
-				'voa' .. sep
+				'voa' .. csep .. '18', -- "VoA18" is slang for VoA 25
+				'voa' .. sep,
+				'voa%d',
+				'voa$',
 			})
 	},
 
@@ -709,6 +712,7 @@ local role_patterns = {
 		'boo?mm?ki?n',
 		'owl[^a-z]',
 		'ba?l?a?n?c?e?' .. csep .. 'd[ru][ud][iu]d?',
+		'd[ru][ud][iu]d?' .. csep .. 'bal[a-z]*', -- dudubalance
 
 		'rogu?e?' .. meta_or_sep,
 		'roug?e?' .. meta_or_sep,
@@ -735,6 +739,7 @@ local role_patterns = {
 		're?s?t?o?' .. csep .. 'd[ru][ud][iu]d?', -- LF rdruid/rdudu
 		meta_or_sep .. 'r' .. csep .. 'd[ru][ud][iu]d?', -- LF rdruid/rdudu
 		'tree', -- LF tree
+		'[^a-z]rdru[^a-z]', -- LF rdru
 
 		're?s?t?o?' .. csep .. 'shamm?y?', -- LF rsham
 		meta_or_sep .. 'r' .. csep .. 'shamm?y?', -- LF rsham
@@ -751,6 +756,8 @@ local role_patterns = {
 		role_sep .. '[mo]t' .. role_sep, -- Need MT/OT
 		role_sep .. '[mo]t' .. csep .. '$', -- Need MT/OT
 		'ta*n+a?k+s?', -- NEED TANKS
+		'ppal', -- prot pala (ppal/ppala/ppally)
+		'[^a-z]bdk[^a-z]', -- blood DK
 		'b[ea][ea]+rs?',
 		'prote?c?t?i?o?n?', -- NEED PROT PALA/WARRI
 	},

@@ -21,12 +21,19 @@ local function is_secondary_selected(_)
 	return 'Secondary' == current_selection;
 end
 
----@param selection 'Active'|'Primary'|'Secondary'
+---@return boolean
+local function is_both_selected(_)
+	return 'Both' == current_selection;
+end
+
+---@param selection 'Active'|'Primary'|'Secondary'|'Both'
 local function set_selection(selection)
 	local text = '';
 
 	if selection == 'Active' then
 		text = 'Active';
+	elseif selection == 'Both' then
+		text = 'Both specs';
 	else
 		---@diagnostic disable-next-line: param-type-mismatch
 		local spec, gs = RaidBrowser.stats.get_raidset(selection)
@@ -56,6 +63,11 @@ local function on_secondary()
 	RaidBrowser.stats.select_current_raidset('Secondary');
 end
 
+local function on_both()
+	set_selection('Both');
+	RaidBrowser.stats.select_current_raidset('Both');
+end
+
 local menu = {
 	{
 		text = 'Active',
@@ -73,6 +85,12 @@ local menu = {
 		text = "Secondary",
 		func = on_secondary,
 		checked = is_secondary_selected,
+	},
+
+	{
+		text = "Both specs",
+		func = on_both,
+		checked = is_both_selected,
 	},
 }
 

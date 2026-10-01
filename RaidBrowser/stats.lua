@@ -177,29 +177,32 @@ end
 
 -- Function wrapper around GetTalentTabInfo
 ---@param i integer
+---@param talent_group integer? Dual spec group (1 or 2). Defaults to the active group.
 ---@return integer
 ---@nodiscard
-local function GetTalentTabPoints(i)
-	local _, _, pts = GetTalentTabInfo(i)
+local function GetTalentTabPoints(i, talent_group)
+	local _, _, pts = GetTalentTabInfo(i, false, false, talent_group)
 	return pts;
 end
 
-function RaidBrowser.stats.active_spec_index()
-	local indices = std.algorithm.transform({ 1, 2, 3 }, GetTalentTabPoints)
+---@param talent_group integer?
+function RaidBrowser.stats.active_spec_index(talent_group)
+	local indices = std.algorithm.transform({ 1, 2, 3 }, function(i) return GetTalentTabPoints(i, talent_group) end)
 	local i, _ = std.algorithm.max_of(indices);
 	return i;
 end
 
+---@param talent_group integer? Dual spec group (1 or 2). Defaults to the active group.
 ---@return string
 ---@nodiscard
-function RaidBrowser.stats.active_spec()
-	local active_tab = RaidBrowser.stats.active_spec_index()
-	local _, _, _, spec_name = GetTalentTabInfo(active_tab);
+function RaidBrowser.stats.active_spec(talent_group)
+	local active_tab = RaidBrowser.stats.active_spec_index(talent_group)
+	local _, _, _, spec_name = GetTalentTabInfo(active_tab, false, false, talent_group);
 
 	-- If we're a feral druid, then we need to distinguish between tank and cat feral.
 	if spec_name == 'DruidFeralCombat' then
 		local protector_of_pack_talent = 22;
-		local _, _, _, _, points = GetTalentInfo(active_tab, protector_of_pack_talent)
+		local _, _, _, _, points = GetTalentInfo(active_tab, protector_of_pack_talent, false, false, talent_group)
 		if points > 0 then
 			return 'Feral Druid (Bear)'
 		else
@@ -269,8 +272,8 @@ end
 
 ---@return string?, integer?
 function RaidBrowser.stats.current_raidset()
-	local x = 0
-	if RaidBrowserCharacterCurrentRaidset == 'Active' then
+	-- 'Both' only affects the join message; everywhere else it behaves like 'Active'.
+	if RaidBrowserCharacterCurrentRaidset == 'Active' or RaidBrowserCharacterCurrentRaidset == 'Both' then
 		return RaidBrowser.stats.get_active_raidset();
 	end
 
@@ -278,7 +281,7 @@ function RaidBrowser.stats.current_raidset()
 	return RaidBrowser.stats.get_raidset(RaidBrowserCharacterCurrentRaidset);
 end
 
----@param set 'Active' | 'Primary' | 'Secondary'
+---@param set 'Active' | 'Primary' | 'Secondary' | 'Both'
 function RaidBrowser.stats.select_current_raidset(set)
 	RaidBrowserCharacterCurrentRaidset = set;
 end
@@ -293,15 +296,53 @@ function RaidBrowser.stats.save_secondary_raidset()
 	RaidBrowserCharacterRaidsets['Secondary'] = { spec = spec, gs = gs };
 end
 
+---@param spec string?
+---@param gs integer|string|nil
+---@return string
+---@nodiscard
+local function format_spec(spec, gs)
+	local text = spec or 'unknown spec';
+	if gs then
+		text = gs .. 'gs ' .. text;
+	end
+	return text;
+end
+
+---Returns the saved raidsets (Primary, then Secondary) that have a spec, each with its gearscore.
+---@return table[] list of { spec = string, gs = integer? }
+---@nodiscard
+function RaidBrowser.stats.get_saved_specs()
+	local result = {};
+	for _, set in ipairs({ 'Primary', 'Secondary' }) do
+		local spec, gs = RaidBrowser.stats.get_raidset(set);
+		if spec then
+			table.insert(result, { spec = spec, gs = gs });
+		end
+	end
+
+	return result;
+end
+
 ---Returns join message string
 ---@param raid_name string
 ---@return string
 ---@nodiscard
 function RaidBrowser.stats.build_join_message(raid_name)
-	local spec, gs = RaidBrowser.stats.current_raidset();
+	local specs_text;
+	if RaidBrowserCharacterCurrentRaidset == 'Both' then
+		local saved = RaidBrowser.stats.get_saved_specs();
+		if #saved > 0 then
+			specs_text = table.concat(
+				std.algorithm.transform(saved, function(s) return format_spec(s.spec, s.gs) end), ' / ');
+		end
+	end
 
-	-- local message = 'inv ' .. gs .. 'gs ' .. spec;
-	local message = 'inv for ' .. raid_name .. " - " .. gs .. 'gs ' .. spec;
+	-- Single selection, or 'Both' with no saved raidsets: fall back to the current raidset.
+	if not specs_text then
+		specs_text = format_spec(RaidBrowser.stats.current_raidset());
+	end
+
+	local message = 'inv for ' .. raid_name .. " - " .. specs_text;
 
 	-- Remove difficulty and raid_name size from the string
 	raid_name = RaidBrowser.get_short_raid_name(raid_name)

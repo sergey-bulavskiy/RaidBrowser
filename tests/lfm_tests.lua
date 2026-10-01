@@ -1,4 +1,50 @@
 local test_cases = {
+	-- Real chat samples (channels /2 Trade and Yell)
+	{
+		message = '** LFM VoA18, Need Ppal, Hpal,Rdru,Rsham, Feral, Ele 5k+ only frost **',
+		should_fail = false,
+		raid = 'voa25',
+		roles = { 'dps', 'tank', 'healer' },
+		gs = '5.0'
+	},
+
+	{
+		message = 'LFM TOGC 25 HC 50/50 Insanity run need 1 Ppal - 1 Healer (Hpal/Disco) - 3 DPS (SP/Bomie/Mage/Rogue) -Trinket Gbid- [A Tribute to Insanity (25 player)]',
+		should_fail = false,
+		raid = 'toc25hc',
+		roles = { 'dps', 'tank', 'healer' },
+		gs = ' '
+	},
+
+	{
+		message = 'LFM ONYXIA 10 NEED ALL 5\'RUN ',
+		should_fail = false,
+		raid = 'onyxia10',
+		roles = { 'dps', 'tank', 'healer' },
+		gs = ' '
+	},
+
+	{
+		message = '** LFM VoA18, Need Rdru, Feral, Ele ** only frost **',
+		should_fail = false,
+		raid = 'voa25',
+		roles = { 'dps', 'healer' },
+		gs = ' '
+	},
+
+	{
+		message = 'LFM ICC 10Nm Need 1xHpala 1xdudubalance 2xtank /W Me Your Gs Spec Aim +8 memo inspect',
+		should_fail = false,
+		raid = 'icc10nm',
+		roles = { 'dps', 'tank', 'healer' },
+		gs = ' '
+	},
+
+	{
+		message = 'LF JWC 450 !!! ',
+		should_fail = true,
+	},
+
 	{
 		message = 'ICC 25N ALT LK RUN @LK NEED Only 1Rshaman/Tank 5.6K GS ++ REQ KS OR NO [INV] (B+P+SFS RESS) [The Light of Dawn]',
 		should_fail = false,
