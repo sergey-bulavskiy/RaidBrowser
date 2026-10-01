@@ -65,6 +65,22 @@ local test_cases = {
 	},
 
 	{
+		message = 'VOA 18 NEED PRAL+ENCHA+RDUDU',
+		should_fail = false,
+		raid = 'voa25',
+		roles = { 'dps', 'tank', 'healer' },
+		gs = ' '
+	},
+
+	{
+		message = 'LFM VOA 25 NEED PWAR, HPAL',
+		should_fail = false,
+		raid = 'voa25',
+		roles = { 'tank', 'healer' },
+		gs = ' '
+	},
+
+	{
 		message = 'LF JWC 450 !!! ',
 		should_fail = true,
 	},

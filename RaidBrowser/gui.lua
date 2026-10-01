@@ -24,12 +24,74 @@ local function compare(a, b)
 	end
 end
 
+-- Starred ("pinned") messages, keyed by sender and raid, so the star survives the sender repeating or
+-- rewording the advert for the same raid. A pinned message is kept in memory (for the session) and stays in
+-- the list even after it expires, until the star is removed.
+local pinned_messages = {}
+
+---@param info table
+---@return string
+---@nodiscard
+local function star_key(info)
+	return info.sender .. '|' .. info.raid_info.name
+end
+
+---@param info table
+---@return boolean
+---@nodiscard
+local function is_starred(info)
+	return pinned_messages[star_key(info)] ~= nil
+end
+
+---@param info table
+local function toggle_star(info)
+	local key = star_key(info)
+	if pinned_messages[key] then
+		pinned_messages[key] = nil
+	else
+		pinned_messages[key] = info
+	end
+end
+RaidBrowser.gui.toggle_star = toggle_star
+
+-- Role columns of the list header (shield, cross, sword icons) and the role each one sorts by.
+local role_headers = { [4] = 'tank', [5] = 'healer', [6] = 'dps' }
+
+---Sort key for a role column: messages that need the role come first.
+---@param info table
+---@param role string
+---@return integer
+---@nodiscard
+local function role_rank(info, role)
+	for _, r in pairs(info.roles) do
+		if r == role or (role == 'dps' and (r == 'melee_dps' or r == 'ranged_dps')) then
+			return 0
+		end
+	end
+
+	return 1
+end
+
 ---@param a table
 ---@param b table
 ---@return boolean
 ---@nodiscard
 local sort_function = function(a, b)
-	if sort_column == "name" then
+	-- Starred raids always come first, whatever the selected sort column is.
+	local starred_a, starred_b = is_starred(a), is_starred(b)
+	if starred_a ~= starred_b then
+		return starred_a
+	end
+
+	if sort_column == 'tank' or sort_column == 'healer' or sort_column == 'dps' then
+		local rank_a, rank_b = role_rank(a, sort_column), role_rank(b, sort_column)
+		if rank_a ~= rank_b then
+			return compare(rank_a, rank_b)
+		end
+
+		-- Keep the order stable between updates
+		return a.sender < b.sender
+	elseif sort_column == "name" then
 		return compare(a.sender, b.sender)
 	elseif sort_column == "gs" then
 		return compare(a.gs, b.gs)
@@ -69,8 +131,22 @@ end
 ---@nodiscard
 local function get_sorted_messages()
 	local keys = {}
+	local listed = {}
 	for _, info in pairs(RaidBrowser.lfm_messages) do
+		local key = star_key(info)
+		listed[key] = true
+		if pinned_messages[key] then
+			pinned_messages[key] = info -- keep the pinned copy fresh while the sender repeats the advert
+		end
+
 		if is_visible(info) then
+			table.insert(keys, info)
+		end
+	end
+
+	-- Pinned messages that are no longer (or not yet) among the active ones
+	for key, info in pairs(pinned_messages) do
+		if not listed[key] and is_visible(info) then
 			table.insert(keys, info)
 		end
 	end
@@ -79,14 +155,33 @@ local function get_sorted_messages()
 	return keys
 end
 
+RaidBrowser.gui.get_sorted_messages = get_sorted_messages
+
 name_column:SetScript('OnClick', function() set_sort('name') end)
 gs_list_column:SetText('GS')
 gs_list_column:SetScript('OnClick', function() set_sort('gs') end)
 raid_list_column:SetText('Raid')
 raid_list_column:SetScript('OnClick', function() set_sort('raid') end)
 
+for index, role in pairs(role_headers) do
+	local header = _G['LFRBrowseFrameColumnHeader' .. index]
+	if header then
+		header:SetScript('OnClick', function() set_sort(role) end)
+	end
+end
+
 local function on_join()
 	local raid_message = RaidBrowser.lfm_messages[LFRBrowseFrame.selectedName]
+
+	-- The selected row may be a pinned message the sender no longer advertises
+	if not raid_message then
+		for _, info in pairs(pinned_messages) do
+			if info.sender == LFRBrowseFrame.selectedName then
+				raid_message = info
+				break
+			end
+		end
+	end
 
 	if not raid_message then return end
 	local raid_name = raid_message.raid_info.name;
@@ -181,7 +276,45 @@ local function assign_lfr_button(button, host_name, lfm_info, index)
 	button.raid_locked, button.raid_reset_time = RaidBrowser.stats.raid_lock_info(button.raid_info);
 	button.type = "party";
 
-	button.partyIcon:Show();
+	button.partyIcon:Hide(); -- always the same crown, carries no information
+
+	-- The former crown column is used to star messages (starred messages are listed first).
+	if not button.star_button then
+		local star = CreateFrame('Button', nil, button)
+		star:SetWidth(16)
+		star:SetHeight(16)
+		star:SetPoint('CENTER', button.partyIcon, 'CENTER', 0, 0)
+
+		star.texture = star:CreateTexture(nil, 'OVERLAY')
+		star.texture:SetAllPoints(star)
+		star.texture:SetTexture('Interface\\TargetingFrame\\UI-RaidTargetingIcons')
+		star.texture:SetTexCoord(0, 0.25, 0, 0.25)
+
+		star:SetScript('OnClick', function(self)
+			local info = self.lfm_info
+			if not info then return end
+
+			toggle_star(info)
+			RaidBrowser.gui.update_list()
+		end)
+
+		star:SetScript('OnEnter', function(self)
+			GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
+			if self.lfm_info and is_starred(self.lfm_info) then
+				GameTooltip:SetText('Remove the star')
+			else
+				GameTooltip:SetText('Star this message (starred messages are listed first)')
+			end
+			GameTooltip:Show()
+		end)
+		star:SetScript('OnLeave', function() GameTooltip:Hide() end)
+
+		button.star_button = star
+	end
+
+	button.star_button.lfm_info = lfm_info
+	button.star_button.texture:SetAlpha(is_starred(lfm_info) and 1 or 0.25)
+	button.star_button:Show()
 
 	button.tankIcon:Hide();
 	button.healerIcon:Hide();

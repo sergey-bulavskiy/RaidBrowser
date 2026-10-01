@@ -36,11 +36,11 @@ local function set_selection(selection)
 		text = 'Both specs';
 	else
 		---@diagnostic disable-next-line: param-type-mismatch
-		local spec, gs = RaidBrowser.stats.get_raidset(selection)
+		local spec, _ = RaidBrowser.stats.get_raidset(selection)
 		if not spec then
 			text = 'Free slot';
-		elseif not gs then
-			text = spec;
+		else
+			text = selection .. ': ' .. spec;
 		end
 	end
 

@@ -707,6 +707,9 @@ local role_patterns = {
 
 		'elem?e?n?t?a?l?' .. csep .. 'shamm?[iy]?',
 		'[^a-z]ele[^a-z]', -- LF ele
+		'[^a-z]enc?ha?[^a-z]', -- enh/enha/encha (enhancement shaman)
+		'[^a-z]enc?ha?$',
+		'enhance',
 		'[^a-z]ele$',
 		'mage[^a-z]',
 
@@ -760,6 +763,10 @@ local role_patterns = {
 		role_sep .. '[mo]t' .. csep .. '$', -- Need MT/OT
 		'ta*n+a?k+s?', -- NEED TANKS
 		'ppal', -- prot pala (ppal/ppala/ppally)
+		'[^a-z]pral[^a-z]', -- prot pala
+		'[^a-z]pral$',
+		'[^a-z]pwarr?i?o?r?[^a-z]', -- prot warrior
+		'[^a-z]pwarr?i?o?r?$',
 		'[^a-z]bdk[^a-z]', -- blood DK
 		'b[ea][ea]+rs?',
 		'prote?c?t?i?o?n?', -- NEED PROT PALA/WARRI
