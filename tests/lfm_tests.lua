@@ -41,6 +41,14 @@ local test_cases = {
 	},
 
 	{
+		message = '** LFM VoA18, Need Rdru, Ele ** only frost **',
+		should_fail = false,
+		raid = 'voa25',
+		roles = { 'dps', 'healer' },
+		gs = ' '
+	},
+
+	{
 		message = 'LF JWC 450 !!! ',
 		should_fail = true,
 	},

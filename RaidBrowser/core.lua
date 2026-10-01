@@ -706,6 +706,8 @@ local role_patterns = {
 		'[^a-z]sp[^a-z]',
 
 		'elem?e?n?t?a?l?' .. csep .. 'shamm?[iy]?',
+		'[^a-z]ele[^a-z]', -- LF ele
+		'[^a-z]ele$',
 		'mage[^a-z]',
 
 		'boo?mm?[iy]?',
