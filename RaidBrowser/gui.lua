@@ -115,12 +115,16 @@ local function set_sort(column)
 	end
 end
 
+-- Raid type shown in the list (raid_info.name, e.g. 'toc25nm'); nil shows all raids. Not persisted.
+local raid_filter = nil
+
 ---Whether the raid list should show the given message. Raids the player is saved to
 ---are hidden when the "Hide saved" filter is on.
 ---@param info table
 ---@return boolean
 ---@nodiscard
 local function is_visible(info)
+	if raid_filter and info.raid_info.name ~= raid_filter then return false end
 	if not RaidBrowserCharacterHideSaved then return true end
 
 	local locked = RaidBrowser.stats.raid_lock_info(info.raid_info);
@@ -156,6 +160,38 @@ local function get_sorted_messages()
 end
 
 RaidBrowser.gui.get_sorted_messages = get_sorted_messages
+
+---@return string?
+function RaidBrowser.gui.get_raid_filter()
+	return raid_filter
+end
+
+---@param name string? A raid name as shown in the list, or nil for all raids
+function RaidBrowser.gui.set_raid_filter(name)
+	raid_filter = name
+	RaidBrowser.gui.update_list()
+end
+
+---Names of the raids currently in the list (active and pinned messages), sorted.
+---@return string[]
+---@nodiscard
+function RaidBrowser.gui.available_raid_names()
+	local seen, names = {}, {}
+	local function add(info)
+		local name = info.raid_info.name
+		if not seen[name] then
+			seen[name] = true
+			table.insert(names, name)
+		end
+	end
+
+	-- lfm_messages is created in OnEnable, after this file has loaded
+	for _, info in pairs(RaidBrowser.lfm_messages or {}) do add(info) end
+	for _, info in pairs(pinned_messages) do add(info) end
+
+	table.sort(names)
+	return names
+end
 
 name_column:SetScript('OnClick', function() set_sort('name') end)
 gs_list_column:SetText('GS')
@@ -445,10 +481,36 @@ function RaidBrowser.gui.update_list()
 	end
 end
 
+-- The rightmost header carries the (former crown) icon that now stands for stars: swap it for the same star.
+-- The header's icon is the last texture of the rightmost column header that uses an LFG texture.
+local function replace_party_header_icon()
+	local icon
+	for i = 1, 10 do
+		local header = _G['LFRBrowseFrameColumnHeader' .. i]
+		if header and header.GetRegions then
+			for _, region in ipairs({ header:GetRegions() }) do
+				if region.GetObjectType and region:GetObjectType() == 'Texture' then
+					local texture = region:GetTexture()
+					if texture and tostring(texture):lower():find('lfg') then
+						icon = region
+					end
+				end
+			end
+		end
+	end
+
+	if icon then
+		icon:SetTexture('Interface\\TargetingFrame\\UI-RaidTargetingIcons')
+		icon:SetTexCoord(0, 0.25, 0, 0.25)
+	end
+end
+
+replace_party_header_icon()
+
 -- Make room for the "Hide saved" checkbox: lower the column headers and the list by a few pixels.
 -- Only frames anchored directly to LFRBrowseFrame are moved (the rest follow their anchors), and only
 -- their top anchors, so the bottom edge of the list stays put.
-local TABLE_OFFSET = 6
+local TABLE_OFFSET = 14
 
 ---@param frame table?
 local function lower_table_top(frame)

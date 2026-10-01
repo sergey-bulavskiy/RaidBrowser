@@ -15,3 +15,4 @@ timer.lua
 stats.lua
 gui.lua
 raidset_frame.lua
+raid_filter_frame.lua

@@ -48,3 +48,24 @@ print('7 roles live  : ' .. table.concat(shown.roles, ','))
 RaidBrowser.lfm_messages.Dan = nil
 print('8 roles after expiry: ' .. table.concat(RaidBrowser.gui.get_sorted_messages()[1].roles, ','))
 RaidBrowser.gui.toggle_star(second)
+
+-- Raid type filter
+RaidBrowser.gui.update_list = function() end
+RaidBrowser.lfm_messages = {
+	Alice = msg('Alice', 'voa25', 'LFM VOA', 0),
+	Bob = msg('Bob', 'toc25nm', 'LFM TOC', 0),
+	Carl = msg('Carl', 'toc25nm', 'LFM TOC 2', 0),
+}
+local pinned_voa = msg('Eve', 'icc10nm', 'LFM ICC', 0)
+RaidBrowser.gui.toggle_star(pinned_voa)
+print('9 raid names  : ' .. table.concat(RaidBrowser.gui.available_raid_names(), ','))
+RaidBrowser.gui.set_raid_filter('toc25nm')
+print('10 filter toc  : ' .. names())
+RaidBrowser.gui.set_raid_filter('icc10nm')
+print('11 filter icc  : ' .. names() .. '   (pinned message obeys the filter)')
+RaidBrowser.gui.set_raid_filter(nil)
+print('12 no filter   : ' .. names())
+
+-- Before OnEnable lfm_messages is nil; building the filter menu at load time must not fail
+RaidBrowser.lfm_messages = nil
+print('13 names at load: ' .. #RaidBrowser.gui.available_raid_names() .. ' raids (no error)')
