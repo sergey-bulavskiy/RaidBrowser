@@ -107,7 +107,7 @@ local function get_option_text(option)
 end
 
 -- Setup dropdown menu for the raidset selection
-frame:SetPoint("CENTER", LFRBrowseFrame, "CENTER", 30, 165)
+frame:SetPoint("CENTER", LFRBrowseFrame, "CENTER", 30, 173)
 UIDropDownMenu_Initialize(frame, EasyMenu_Initialize, nil, nil, menu);
 
 local function show_menu()
@@ -139,7 +139,7 @@ end
 
 -- Create raidset save button
 local button = CreateFrame("BUTTON", "RaidBrowserRaidSetSaveButton", LFRBrowseFrame, "OptionsButtonTemplate")
-button:SetPoint("CENTER", LFRBrowseFrame, "CENTER", -53, 168)
+button:SetPoint("CENTER", LFRBrowseFrame, "CENTER", -53, 176)
 button:EnableMouse(true)
 button:RegisterForClicks("AnyUp")
 

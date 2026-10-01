@@ -706,11 +706,9 @@ local role_patterns = {
 		'[^a-z]sp[^a-z]',
 
 		'elem?e?n?t?a?l?' .. csep .. 'shamm?[iy]?',
-		'[^a-z]ele[^a-z]', -- LF ele
-		'[^a-z]enc?ha?[^a-z]', -- enh/enha/encha (enhancement shaman)
-		'[^a-z]enc?ha?$',
+		'%f[%a]ele%f[%A]', -- LF ele
+		'%f[%a]enc?ha?%f[%A]', -- enh/enha/encha (enhancement shaman)
 		'enhance',
-		'[^a-z]ele$',
 		'mage[^a-z]',
 
 		'boo?mm?[iy]?',
@@ -744,10 +742,10 @@ local role_patterns = {
 		're?s?t?o?' .. csep .. 'd[ru][ud][iu]d?', -- LF rdruid/rdudu
 		meta_or_sep .. 'r' .. csep .. 'd[ru][ud][iu]d?', -- LF rdruid/rdudu
 		'tree', -- LF tree
-		'[^a-z]rdru[^a-z]', -- LF rdru
+		'%f[%a]rdru%f[%A]', -- LF rdru
 
-		're?s?t?o?' .. csep .. 'shamm?y?', -- LF rsham
-		meta_or_sep .. 'r' .. csep .. 'shamm?y?', -- LF rsham
+		'res[a-z]*' .. csep .. 'sham[a-z]*', -- LF resto shaman (a bare "shaman" can be any spec)
+		'%f[%a]r' .. csep .. 'sham[a-z]*', -- LF rsham
 
 		'disco?[^a-z]',
 		'disco?$',
@@ -763,11 +761,9 @@ local role_patterns = {
 		role_sep .. '[mo]t' .. csep .. '$', -- Need MT/OT
 		'ta*n+a?k+s?', -- NEED TANKS
 		'ppal', -- prot pala (ppal/ppala/ppally)
-		'[^a-z]pral[^a-z]', -- prot pala
-		'[^a-z]pral$',
-		'[^a-z]pwarr?i?o?r?[^a-z]', -- prot warrior
-		'[^a-z]pwarr?i?o?r?$',
-		'[^a-z]bdk[^a-z]', -- blood DK
+		'%f[%a]pral%f[%A]', -- prot pala
+		'%f[%a]pwarr?i?o?r?%f[%A]', -- prot warrior
+		'%f[%a]bdk%f[%A]', -- blood DK
 		'b[ea][ea]+rs?',
 		'prote?c?t?i?o?n?', -- NEED PROT PALA/WARRI
 	},

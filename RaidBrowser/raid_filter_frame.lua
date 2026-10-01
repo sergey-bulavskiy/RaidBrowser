@@ -3,7 +3,7 @@ local ALL_RAIDS = 'All raids';
 
 local frame = CreateFrame('Frame', 'RaidBrowserRaidFilterMenu', LFRBrowseFrame, 'UIDropDownMenuTemplate')
 UIDropDownMenu_SetWidth(frame, 150)
-frame:SetPoint('TOPLEFT', RaidBrowserRaidSetMenu, 'BOTTOMLEFT', 0, 14)
+frame:SetPoint('TOPLEFT', RaidBrowserRaidSetMenu, 'BOTTOMLEFT', 0, 16)
 
 local function refresh_text()
 	UIDropDownMenu_SetText(frame, RaidBrowser.gui.get_raid_filter() or ALL_RAIDS)

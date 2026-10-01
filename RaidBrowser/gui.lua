@@ -507,35 +507,6 @@ end
 
 replace_party_header_icon()
 
--- Make room for the "Hide saved" checkbox: lower the column headers and the list by a few pixels.
--- Only frames anchored directly to LFRBrowseFrame are moved (the rest follow their anchors), and only
--- their top anchors, so the bottom edge of the list stays put.
-local TABLE_OFFSET = 14
-
----@param frame table?
-local function lower_table_top(frame)
-	if not frame or frame:GetNumPoints() == 0 then return end
-
-	local points = {}
-	for i = 1, frame:GetNumPoints() do
-		local point, relative_to, relative_point, x, y = frame:GetPoint(i)
-		if relative_to and relative_to ~= LFRBrowseFrame then return end
-		points[i] = { point, relative_to, relative_point, x, y }
-	end
-
-	frame:ClearAllPoints()
-	for _, p in ipairs(points) do
-		local dy = p[1]:find('TOP') and TABLE_OFFSET or 0
-		frame:SetPoint(p[1], p[2] or LFRBrowseFrame, p[3], p[4], p[5] - dy)
-	end
-end
-
-for i = 1, 5 do
-	lower_table_top(_G['LFRBrowseFrameColumnHeader' .. i])
-end
-lower_table_top(LFRBrowseFrameListScrollFrame)
-lower_table_top(LFRBrowseFrameListButton1)
-
 -- "Hide saved" filter: hides raids the player is already saved to.
 local hide_saved_checkbox = CreateFrame('CheckButton', 'RaidBrowserHideSavedCheckbox', LFRBrowseFrame, 'UICheckButtonTemplate')
 hide_saved_checkbox:SetWidth(18)
