@@ -162,7 +162,7 @@ local function assign_lfr_button(button, host_name, lfm_info, index)
 	button.level:SetText(button.lfm_info.gs); -- Previously level, now GS
 
 	-- Raid name
-	button.class:SetText(lfm_info.display_name or button.raid_info.name);
+	button.class:SetText(button.raid_info.name);
 
 	button.raid_locked, button.raid_reset_time = RaidBrowser.stats.raid_lock_info(button.raid_info);
 	button.type = "party";
