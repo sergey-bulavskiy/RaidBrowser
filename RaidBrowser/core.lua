@@ -747,6 +747,7 @@ local role_patterns = {
 		meta_or_sep .. 'r' .. csep .. 'shamm?y?', -- LF rsham
 
 		'disco?[^a-z]',
+		'disco?$',
 		'dpri?e?st[^a-z]', -- disc priest
 		meta_or_sep .. 'd' .. csep .. 'pri?e?st', -- disc priest
 
@@ -1154,6 +1155,19 @@ function RaidBrowser.get_short_raid_name(raid_name)
 	return string.gsub(raid_name, '[1|2][0|5](%w*)', '');
 end
 
+---Name shown in the raid list. VoA25 is commonly advertised as "VoA18".
+---@param raid_info table
+---@param message string
+---@return string
+---@nodiscard
+function RaidBrowser.display_raid_name(raid_info, message)
+	if raid_info.name == 'voa25' and message and message:lower():find('voa' .. csep .. '18') then
+		return 'voa18';
+	end
+
+	return raid_info.name;
+end
+
 --[[ Event handlers and listeners ]] --
 RaidBrowserLfmChannelListeners = {
 	['CHAT_MSG_CHANNEL'] = {},
@@ -1182,6 +1196,7 @@ local function event_handler(self, event, message, sender)
 			-- Put the sender in the table of active raids
 			RaidBrowser.lfm_messages[sender] = {
 				raid_info = raid_info,
+				display_name = RaidBrowser.display_raid_name(raid_info, message),
 				roles = roles,
 				gs = gs,
 				time = time(),

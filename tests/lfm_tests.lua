@@ -49,6 +49,22 @@ local test_cases = {
 	},
 
 	{
+		message = 'LFM VOA 25 NEED DISC',
+		should_fail = false,
+		raid = 'voa25',
+		roles = { 'healer' },
+		gs = ' '
+	},
+
+	{
+		message = 'LFM VOA 25 NEED DISCO',
+		should_fail = false,
+		raid = 'voa25',
+		roles = { 'healer' },
+		gs = ' '
+	},
+
+	{
 		message = 'LF JWC 450 !!! ',
 		should_fail = true,
 	},
