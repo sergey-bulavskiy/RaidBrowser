@@ -11,6 +11,52 @@ When searching for a raid to join in Global, there can be large amounts of text 
 
 No longer will you join a raid and embarrass yourself upon realizing that you've already been locked into that raid for the week. RaidBrowser clearly highlights locked raids in red (e.g. ![alt text](https://i.imgur.com/hvTL7s8.png) ). Any raids for which you are not saved are marked in bright green (e.g. ![alt text](https://i.imgur.com/5SkqcwA.png) ). Thus, you will know beforehand whether you should ignore that raid or not.
 
+# About this fork
+
+This is a fork of [Ostoic/RaidBrowser](https://github.com/Ostoic/RaidBrowser) (MIT licensed), maintained for the 3.3.5a client. It keeps everything the original does and adds the following.
+
+![Raid Browser list](docs/images/list.png)
+
+**Better message detection**
+- More ways to name roles and raids are understood: `Ppal`, `Pral`, `PWAR`, `BDK` (tank), `Rdru`, `Rsham`, `Disc`/`Disco` (healer), `Ele`, `Enh`/`Enha`/`Encha`, `dudu balance` (dps) and others.
+- `VoA18` is read as VoA 25, since that is how it is usually advertised.
+- A bare "shaman" is no longer counted as a healer, so "Shaman dps" is listed as dps.
+- Real advert samples for these cases are in `tests/lfm_tests.lua`.
+
+**Join message with both specs**
+
+The raid set menu has a new "Both specs" entry. With it, the whisper sent by Join contains both saved sets (spec and gearscore), e.g. `inv for toc25hc - 5700gs Protection Paladin / 5200gs Retribution Paladin`. The menu now also shows which set is selected, and Join no longer fails when GearScoreLite is not installed.
+
+![Raid set menu](docs/images/raidset-both-specs.png)
+
+**Hide saved raids**
+
+A checkbox under the "Save Raid Gear" button hides every raid you are already saved to. The choice is remembered per character.
+
+![Hide saved raids](docs/images/hide-saved.png)
+
+**Filter by raid**
+
+A second dropdown lists the raids that are currently in the list, under the same names as the Raid column (`toc25nm`, `voa25`, ...), and shows only the selected one.
+
+![Raid filter](docs/images/raid-filter.png)
+
+**Stars: pin the messages you care about**
+
+The last column is a star. Click it to pin a message: pinned messages are always listed first, whatever the sort order is, and they stay in the list after the usual one-minute expiry until you remove the star. A pin belongs to a sender and a raid, so if the host rewords the advert for the same raid the star stays and the newest roles and gearscore are shown. Pins are kept for the current session only.
+
+![Star tooltip](docs/images/star-tooltip.webp)
+
+**Sort by role**
+
+Click the tank, healer or damage icon in the list header to list the messages that need that role first. Name, GS and Raid sort as before.
+
+![Starred messages and role sort](docs/images/star-and-role-sort.webp)
+
+**Developer tools**
+
+`tools/parse.lua` runs chat lines through the parser outside the game with LuaJIT (Lua 5.1, the same as the client): `luajit tools/parse.lua chatlog.txt`. The other scripts in `tools/` check the join message, role sorting and pinned messages with stubbed game frames.
+
 # Features
 
 - Easily find raids hosted by other players by searching for "LFM barks" in global/trade/any chat channels. Raids are listed along with the required roles, and the minimum gearscore requirement, if any were mentioned in the message.
