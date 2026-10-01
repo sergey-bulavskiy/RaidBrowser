@@ -7,15 +7,13 @@ This addon replaces the unused (in 3.3.5a) LFR tab in the social menu with a wor
 
 When searching for a raid to join in Global, there can be large amounts of text (and meaningless spam) to read in order to find anything. This addon does all the text processing work and lists all the raids in a coherent format. Each entry in the raid browser is formatted as follows to include raid leader name, raid name, gearscore requirements, and the list of needed roles (tank/healer/dps).
 
-![alt text](https://i.imgur.com/6aqE1TD.png)
+![Raid Browser list](docs/images/list.png)
 
 No longer will you join a raid and embarrass yourself upon realizing that you've already been locked into that raid for the week. RaidBrowser clearly highlights locked raids in red (e.g. ![alt text](https://i.imgur.com/hvTL7s8.png) ). Any raids for which you are not saved are marked in bright green (e.g. ![alt text](https://i.imgur.com/5SkqcwA.png) ). Thus, you will know beforehand whether you should ignore that raid or not.
 
 # About this fork
 
 This is a fork of [Ostoic/RaidBrowser](https://github.com/Ostoic/RaidBrowser) (MIT licensed), maintained for the 3.3.5a client. It keeps everything the original does and adds the following.
-
-![Raid Browser list](docs/images/list.png)
 
 **Better message detection**
 - More ways to name roles and raids are understood: `Ppal`, `Pral`, `PWAR`, `BDK` (tank), `Rdru`, `Rsham`, `Disc`/`Disco` (healer), `Ele`, `Enh`/`Enha`/`Encha`, `dudu balance` (dps) and others.
@@ -68,7 +66,7 @@ Click the tank, healer or damage icon in the list header to list the messages th
   
 # How to Download
 
-In order to download the latest stable version, click on "releases" which is in the repository statistics tab under the addon description (example: https://github.com/Ostoic/RaidBrowser/releases/latest). The .zip file is the addon folder, so make sure you unzip that folder to one named "RaidBrowser", then follow the instructions below.
+This fork has no releases yet: use the green "Code" button on the repository page and choose "Download ZIP" (or clone the repository). The addon itself is the inner `RaidBrowser` folder, the one that contains `RaidBrowser.toc`; the other folders (`docs`, `tests`, `tools`) are not needed in the game. Copy that inner folder as described below.
 
 # Installation and Usage
 As with any other addon, copy the RaidBrowser folder into your %WoW Folder%/Interface/AddOns directory. 
@@ -88,11 +86,6 @@ Now RaidBrowser will be able to find raids without having global being dumped in
 
 See the common issues section for further help.
 
-# Examples 
-![alt text](https://i.imgur.com/dR7MIUf.png)
-![alt text](https://i.imgur.com/qkVS07w.png)
-![alt text](https://i.imgur.com/GvEgQSJ.gif)
-
 # Common Issues
 **Improper Addon Placement**
 
@@ -101,8 +94,8 @@ A fairly common issue when unzipping the addon is that your zip program puts the
 # Todo
 - Further improve pattern matching for better detection of LFM messages.
 - Raid host tab where "Inv x gs [achieve]" messages are parsed similarly to how LFM messages are parsed. Can select raid to host, GS min req, achievement requirement, etc which will be formatted into an auto-barked message sent to the specified channel.
-- If you run into any bugs, such as incorrect information being reported by the addon, send me a screenshot/copy of the original message and the incorrect information the addon displayed.
-- Suggestions?? Open up an issue or send me a message ingame/in discord.
+- If you run into any bugs, such as incorrect information being reported by the addon, open an issue in this repository with a copy of the original chat message and what the addon displayed for it.
+- Suggestions?? Open up an issue.
 
 # Remark
 
