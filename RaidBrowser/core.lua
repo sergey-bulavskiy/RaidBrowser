@@ -1234,6 +1234,7 @@ function RaidBrowser:OnEnable()
 	end
 
 	RaidBrowser.gui.raidset.initialize();
+	RaidBrowser.gui.initialize_filters();
 end
 
 function RaidBrowser:OnDisable()

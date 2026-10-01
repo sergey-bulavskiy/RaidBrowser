@@ -53,12 +53,26 @@ local function set_sort(column)
 	end
 end
 
+---Whether the raid list should show the given message. Raids the player is saved to
+---are hidden when the "Hide saved" filter is on.
+---@param info table
+---@return boolean
+---@nodiscard
+local function is_visible(info)
+	if not RaidBrowserCharacterHideSaved then return true end
+
+	local locked = RaidBrowser.stats.raid_lock_info(info.raid_info);
+	return not locked;
+end
+
 ---@return table
 ---@nodiscard
 local function get_sorted_messages()
 	local keys = {}
 	for _, info in pairs(RaidBrowser.lfm_messages) do
-		table.insert(keys, info)
+		if is_visible(info) then
+			table.insert(keys, info)
+		end
 	end
 
 	table.sort(keys, sort_function)
@@ -263,18 +277,10 @@ local function clear_list()
 	end
 end
 
----@param t table
----@return integer
-local function table_length(t)
-	local count = 0
-	for _ in pairs(t) do count = count + 1 end
-	return count
-end
-
 function RaidBrowser.gui.update_list()
 	LFRBrowseFrameRefreshButton.timeUntilNextRefresh = LFR_BROWSE_AUTO_REFRESH_TIME;
 
-	local numResults = table_length(RaidBrowser.lfm_messages)
+	local numResults = #get_sorted_messages()
 	FauxScrollFrame_Update(LFRBrowseFrameListScrollFrame, numResults, NUM_LFR_LIST_BUTTONS, 16);
 
 	local offset = FauxScrollFrame_GetOffset(LFRBrowseFrameListScrollFrame);
@@ -304,6 +310,63 @@ function RaidBrowser.gui.update_list()
 
 		update_buttons();
 	end
+end
+
+-- Make room for the "Hide saved" checkbox: lower the column headers and the list by a few pixels.
+-- Only frames anchored directly to LFRBrowseFrame are moved (the rest follow their anchors), and only
+-- their top anchors, so the bottom edge of the list stays put.
+local TABLE_OFFSET = 6
+
+---@param frame table?
+local function lower_table_top(frame)
+	if not frame or frame:GetNumPoints() == 0 then return end
+
+	local points = {}
+	for i = 1, frame:GetNumPoints() do
+		local point, relative_to, relative_point, x, y = frame:GetPoint(i)
+		if relative_to and relative_to ~= LFRBrowseFrame then return end
+		points[i] = { point, relative_to, relative_point, x, y }
+	end
+
+	frame:ClearAllPoints()
+	for _, p in ipairs(points) do
+		local dy = p[1]:find('TOP') and TABLE_OFFSET or 0
+		frame:SetPoint(p[1], p[2] or LFRBrowseFrame, p[3], p[4], p[5] - dy)
+	end
+end
+
+for i = 1, 5 do
+	lower_table_top(_G['LFRBrowseFrameColumnHeader' .. i])
+end
+lower_table_top(LFRBrowseFrameListScrollFrame)
+lower_table_top(LFRBrowseFrameListButton1)
+
+-- "Hide saved" filter: hides raids the player is already saved to.
+local hide_saved_checkbox = CreateFrame('CheckButton', 'RaidBrowserHideSavedCheckbox', LFRBrowseFrame, 'UICheckButtonTemplate')
+hide_saved_checkbox:SetWidth(18)
+hide_saved_checkbox:SetHeight(18)
+hide_saved_checkbox:SetPoint('BOTTOMLEFT', name_column, 'TOPLEFT', 36, -2)
+_G[hide_saved_checkbox:GetName() .. 'Text']:SetText('Hide saved raids')
+hide_saved_checkbox:SetScript('OnClick', function(self)
+	RaidBrowserCharacterHideSaved = self:GetChecked() and true or false
+	RaidBrowser.gui.update_list()
+end)
+hide_saved_checkbox:SetScript('OnEnter', function(self)
+	GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
+	GameTooltip:SetText('Hide raids you are already saved to')
+	GameTooltip:Show()
+end)
+hide_saved_checkbox:SetScript('OnLeave', function() GameTooltip:Hide() end)
+
+-- Saved variables are only available after the addon has loaded.
+function RaidBrowser.gui.initialize_filters()
+	-- The save button is created in raidset_frame.lua, which loads after this file.
+	if RaidBrowserRaidSetSaveButton then
+		hide_saved_checkbox:ClearAllPoints()
+		hide_saved_checkbox:SetPoint('TOPLEFT', RaidBrowserRaidSetSaveButton, 'BOTTOMLEFT', 0, 1)
+	end
+
+	hide_saved_checkbox:SetChecked(RaidBrowserCharacterHideSaved)
 end
 
 -- Setup LFR browser hooks
