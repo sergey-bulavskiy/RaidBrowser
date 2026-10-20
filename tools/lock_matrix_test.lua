@@ -28,8 +28,10 @@ local adverts = {
 	{ 'LFM [A Tribute to Insanity (10 player)] NEED ALL', 'Trial of the Crusader', 10, true },
 	{ 'LFM [A Tribute to Immortality] NEED ALL', 'Trial of the Crusader', 25, true },
 	{ 'LFM [A Tribute to Dedicated Insanity] NEED ALL', 'Trial of the Crusader', 10, true },
-	-- ... but a raid named first wins (the author of the parser decided this on purpose)
-	{ 'LFM TOC 25 NEED ALL [A Tribute to Mad Skill (25 player)]', 'Trial of the Crusader', 25, false },
+	-- ... and it wins over a raid name given before it
+	{ 'LFM TOC 25 NEED ALL [A Tribute to Mad Skill (25 player)]', 'Trial of the Crusader', 25, true },
+	{ 'LFM TOC 10 NEED ALL [A Tribute to Insanity (10 player)]', 'Trial of the Crusader', 10, true },
+	{ 'LFM TOC 25 NM NEED ALL [A Tribute to Immortality]', 'Trial of the Crusader', 25, true },
 	{ 'LFM TOC 25 NEED ALL [Call of the Crusade (25 player)]', 'Trial of the Crusader', 25, false },
 	{ 'LFM ICC 10 NM NEED ALL', 'Icecrown Citadel', 10, false },
 	{ 'LFM ICC 25 NEED ALL', 'Icecrown Citadel', 25, false },

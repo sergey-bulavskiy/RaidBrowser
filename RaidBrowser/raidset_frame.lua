@@ -128,10 +128,17 @@ local function on_raidset_save()
 
 	local spec, gs = RaidBrowser.stats.current_raidset();
 
+	-- The gearscore is only known when GearScoreLite is installed.
+	local text = spec or 'unknown spec';
+	if gs then
+		text = text .. ' ' .. gs .. 'gs';
+	end
+
 	---@diagnostic disable-next-line: undefined-field
-	RaidBrowser:Print('Raidset saved: ' .. spec .. ' ' .. gs .. 'gs');
+	RaidBrowser:Print('Raidset saved: ' .. text);
 	set_selection(current_selection);
 end
+RaidBrowser.gui.raidset.save = on_raidset_save;
 
 function RaidBrowser.gui.raidset.initialize()
 	set_selection(RaidBrowserCharacterCurrentRaidset);

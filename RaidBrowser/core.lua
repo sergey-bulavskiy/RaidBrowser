@@ -235,6 +235,8 @@ local raid_list = {
 				create_achievement_pattern(3918),
 			}-- Trial of the grand crusader (togc) refers to heroic toc
 		),
+		-- Heroic-only achievements: they decide the raid even if a raid name comes first in the message.
+		strong_patterns = { 'tribute to [%a%s]*%(10 player%)', 'dedicated insanity' },
 	},
 
 	{
@@ -252,6 +254,8 @@ local raid_list = {
 				create_achievement_pattern(3812),
 			}-- Trial of the grand crusader (togc) refers to heroic toc
 		),
+		-- Heroic-only achievements: they decide the raid even if a raid name comes first in the message.
+		strong_patterns = { 'tribute to [%a%s]*%(25 player%)', 'tribute to immortality' },
 	},
 
 	{
@@ -1028,6 +1032,7 @@ function RaidBrowser.lex_raid_info(message, debug)
 	local raid;
 	local num_unique_raids = 0;
 	local raid_pattern_index;
+	local raid_is_strong = false;
 	for _, r in ipairs(raid_list) do
 		local message_index;
 		local index = std.algorithm.find_if(r.patterns, function(pattern)
@@ -1059,9 +1064,27 @@ function RaidBrowser.lex_raid_info(message, debug)
 			end
 			
 			-- overwrite raid choice only if new raid is prioritized or found earlier in message (as people post hc achievements after declaring nm)
-			if (raid_pattern_index == nil or (raid and r.prioritized and not raid.prioritized) or raid_pattern_index > message_index) then
+			-- A raid found through a "strong" pattern (heroic-only achievement) always wins, and is not replaced afterwards.
+			local is_strong = false
+			if r.strong_patterns then
+				for _, strong in ipairs(r.strong_patterns) do
+					if r.patterns[index] == strong then is_strong = true end
+				end
+			end
+
+			local take
+			if is_strong and not raid_is_strong then
+				take = true
+			elseif raid_is_strong then
+				take = false
+			else
+				take = raid_pattern_index == nil or (raid and r.prioritized and not raid.prioritized) or raid_pattern_index > message_index
+			end
+
+			if take then
 				raid_pattern_index = message_index
 				raid = r;
+				raid_is_strong = is_strong
 			end
 		end
 	end
