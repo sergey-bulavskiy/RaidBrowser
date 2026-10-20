@@ -102,6 +102,14 @@ local test_cases = {
 	},
 
 	{
+		message = 'LFM TOCG 25 RESS O+P(AUCTION DC) GS 5.1+ NEED ALL (13/25) /W INV+SPEC',
+		should_fail = false,
+		raid = 'toc25hc',
+		roles = { 'dps', 'tank', 'healer' },
+		gs = '5.1'
+	},
+
+	{
 		message = 'LF JWC 450 !!! ',
 		should_fail = true,
 	},

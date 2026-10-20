@@ -1,8 +1,9 @@
 RaidBrowser.stats = {};
 
+-- Zone names are only translated on non-English clients. Do not fail the whole file if the library is missing.
 local raid_translations
 if GetLocale() ~= "enUS" then
-	raid_translations = LibStub("LibBabble-Zone-3.0")
+	raid_translations = LibStub("LibBabble-Zone-3.0", true)
 end
 
 local raid_achievements = {
