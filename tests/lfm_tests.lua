@@ -110,6 +110,14 @@ local test_cases = {
 	},
 
 	{
+		message = 'LFM [A Tribute to Mad Skill (25 player)] NEED ALL',
+		should_fail = false,
+		raid = 'toc25hc',
+		roles = { 'dps', 'tank', 'healer' },
+		gs = ' '
+	},
+
+	{
 		message = 'LF JWC 450 !!! ',
 		should_fail = true,
 	},

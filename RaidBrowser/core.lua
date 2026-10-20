@@ -229,6 +229,8 @@ local raid_list = {
 			{
 				'togc' .. csep .. '10',
 				'tocg' .. csep .. '10', -- common typo of togc
+				'tribute to [%a%s]*%(10 player%)', -- heroic achievements: Skill, Mad Skill, Insanity
+				'dedicated insanity',
 				'Call of the Grand Crusade %(10 player%)',
 				create_achievement_pattern(3918),
 			}-- Trial of the grand crusader (togc) refers to heroic toc
@@ -244,6 +246,8 @@ local raid_list = {
 			{
 				'togc' .. csep .. '25',
 				'tocg' .. csep .. '25', -- common typo of togc
+				'tribute to [%a%s]*%(25 player%)', -- heroic achievements: Skill, Mad Skill, Insanity
+				'tribute to immortality',
 				'Call of the Grand Crusade %(25 player%)',
 				create_achievement_pattern(3812),
 			}-- Trial of the grand crusader (togc) refers to heroic toc

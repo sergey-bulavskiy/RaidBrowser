@@ -226,11 +226,24 @@ function RaidBrowser.stats.raid_lock_info(raid_info)
 	end
 
 	if instance_name == nil or raid_info.size == nil then return false, nil end
+
+	-- Normal and heroic are separate lockouts. Only raids listed as nm/hc have a difficulty;
+	-- the others (weeklies, rep farms, old raids) match any difficulty.
+	local is_heroic = raid_info.name ~= nil and raid_info.name:find('hc$') ~= nil
+	local has_difficulty = is_heroic or (raid_info.name ~= nil and raid_info.name:find('nm$') ~= nil)
+
 	for i = 1, GetNumSavedInstances() do
-		local saved_name, _, reset, _, locked, _, _, _, saved_size = GetSavedInstanceInfo(i);
+		-- difficulty: 1 = 10 normal, 2 = 25 normal, 3 = 10 heroic, 4 = 25 heroic
+		local saved_name, _, reset, saved_difficulty, locked, _, _, _, saved_size = GetSavedInstanceInfo(i);
 		if saved_name ~= nil then
+			local same_difficulty = true
+			if has_difficulty and saved_difficulty then
+				same_difficulty = (saved_difficulty >= 3) == is_heroic
+			end
+
 			-- @napnapnap lockout fix (c8207076730d04f41b881dea3dd9f6ca32655372)
-			if string.lower(saved_name) == string.lower(instance_name) and saved_size == raid_info.size and locked then
+			if string.lower(saved_name) == string.lower(instance_name) and saved_size == raid_info.size
+				and same_difficulty and locked then
 				return true, reset;
 			end
 		end
